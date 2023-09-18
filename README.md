@@ -1,2 +1,0 @@
-# MadCatDiscordBot
-MadCatDiscordBot
