@@ -7,6 +7,8 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using Discord.Rest;
 
 namespace JsonClass
 {
@@ -20,6 +22,5 @@ namespace JsonClass
             var ValueReturned = JsonObject.GetValue(ValueWanted).ToString();
             return ValueReturned;
         }
-
     }
 }
