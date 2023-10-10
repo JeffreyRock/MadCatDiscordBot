@@ -31,6 +31,7 @@ public class DiscordBot
     public static Task main(string[] args) => new DiscordBot().MainAsync();
     public async Task MainAsync()
     {
+        #region json Reading 
         var json = new JsonClass.Json();
         _client = new DiscordSocketClient();
         _client.Log += Log;
