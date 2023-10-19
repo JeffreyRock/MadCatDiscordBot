@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.WebSocket;
+using Discord;
+using JsonClass;
 using MySql.Data.MySqlClient;   
 
 namespace SQLConnector
@@ -22,7 +27,18 @@ namespace SQLConnector
             _ConnectionString = "Server=" + server + ";Port=" + port + ";Database=" +dataBase + ";Uid=" + userName + ";Pwd=" + password + ";";
         }
         public void SQLBootUp()
-        {
+        {  
+            if(ConnectionString == null)
+            {
+                var json = new JsonClass.Json();
+                var server = json.ReturnValue("Server", Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "json1.json"));
+                var port = json.ReturnValue("Port", Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "json1.json"));
+                var dataBase = json.ReturnValue("Database", Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "json1.json"));
+                var userName = json.ReturnValue("User", Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "json1.json"));
+                var password = json.ReturnValue("Password", Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "json1.json"));
+                _ConnectionString = "Server=" + server + ";Port=" + port + ";Database=" + dataBase + ";Uid=" + userName + ";Pwd=" + password + ";";
+            }
+
             connection = new MySqlConnection(ConnectionString);
             try
             {
@@ -45,5 +61,10 @@ namespace SQLConnector
                 }
         }
 
+        public bool CheckIfUserIsInDataBase(string userName)
+        {
+            return false;
+        }
     }
 }
+

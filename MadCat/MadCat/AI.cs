@@ -1,49 +1,39 @@
 ﻿using System;
-using System.Net.Http;
-using System.Runtime.Intrinsics.Arm;
-using System.Threading.Tasks;
-using JsonClass;
-using Newtonsoft.Json;
-
+using System.IO;
+using System.Linq;
 
 
 namespace AI
 {
-    public class ChatGPU
+    public class ImageHandler
     {
-        private string _apiToken;
-
-        public string ApiToken
+        public string GetLatestImageFromFolder(string folderPath)
         {
-            get { return _apiToken; }
-            set { _apiToken = value; }
-        }
-        private const string uribase = "https://api.openai.com/v1/engines/davinci-codex/completions";
-
-        public async Task<string> GetString(string prompt)
-        {
-            using (var client = new HttpClient())
+            try
             {
-
-                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + ApiToken);
-
-                var requestBody = new
+                if (!Directory.Exists(folderPath))
                 {
-                    prompt = prompt,
-                    max_tokens = 150,
-                    temperature = 0.7
-                };
-                var json = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(uribase, content);
-                var responseContent = await response.Content.ReadAsStringAsync();
+                    throw new DirectoryNotFoundException($"The folder '{folderPath}' does not exist.");
+                }
+                string[] imageFiles = Directory.GetFiles(folderPath, "*", SearchOption.TopDirectoryOnly);
 
-                dynamic jsonResponse = JsonConvert.DeserializeObject(responseContent);
+                if (imageFiles.Length > 0)
+                {
 
-                return jsonResponse.choice[0].text;
+                    string latestImage = imageFiles.OrderByDescending(file => new FileInfo(file).CreationTime).First();
+
+                    return latestImage;
+                }
+                else
+                {
+                    throw new FileNotFoundException($"No image files found in the folder '{folderPath}'.");
+                }
+            }
+            catch (Exception ex)
+            { 
+                Console.WriteLine($"Error: {ex.Message}");
+                return null;
             }
         }
-
-
     }
 }
